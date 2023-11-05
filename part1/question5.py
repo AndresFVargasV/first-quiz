@@ -20,8 +20,11 @@
 
 sql_create_favorite_foods = """
 
-Your SQL here.
-
+CREATE TABLE favorite_foods (
+    food_id INTEGER PRIMARY KEY,
+    name TEXT,
+    vegetarian INTEGER
+);
 """
 
 # Part 5.B:
@@ -30,7 +33,11 @@ Your SQL here.
 
 sql_alter_tables_with_favorite_food = """
 
-Your SQL here.
+ALTER TABLE animals
+ADD favorite_food_id INTEGER;
+
+ALTER TABLE people
+ADD favorite_food_id INTEGER;
 
 """
 
@@ -40,6 +47,6 @@ Your SQL here.
 
 sql_select_all_vegetarian_pets = """
 
-Your SQL here.
+select a.name, ff.name from animals a INNER JOIN favorite_foods ff on ff.food_id = a.favorite_food_id where ff.vegetarian = 1
 
 """

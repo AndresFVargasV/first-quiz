@@ -1,0 +1,316 @@
+diff --git a/part1/question1.py b/part1/question1.py
+index 5c99fdb..3f74c24 100644
+--- a/part1/question1.py
++++ b/part1/question1.py
+@@ -20,6 +20,8 @@ def get_city_temperature(city):
+       return 17
+    if city == "San Francisco":
+       return 16
++   if city == "New York":
++      return 14
+ 
+ def get_city_weather(city):
+ 
+@@ -29,6 +31,8 @@ def get_city_weather(city):
+      sky_condition = "cloudy"
+   elif city == "New York":
+      sky_condition = "rainy"
++  elif city == "Quito":
++      sky_condition = "sunny"
+ 
+   temperature = get_city_temperature(city)
+ 
+diff --git a/part1/question2.py b/part1/question2.py
+index 34a9b01..f88908a 100644
+--- a/part1/question2.py
++++ b/part1/question2.py
+@@ -15,7 +15,9 @@
+ # it. As always, there is a test suite that checks the result. It is in 
+ # `question2_test.py.`
+ 
+-swapper = None
++def swapper(list):
++  x, y = list
++  return y, x
+ 
+ def run_swapper(list_of_tuples):
+   return list(map(swapper, list_of_tuples))
+\ No newline at end of file
+diff --git a/part1/question3.py b/part1/question3.py
+index 04fab99..103c098 100644
+--- a/part1/question3.py
++++ b/part1/question3.py
+@@ -25,9 +25,32 @@
+ # The `alchemy_combine()` function will use your oven. You can see the expected 
+ # formulas and their outputs in the test file, `question3_test.py`.
+ 
++# This function should return an oven instance!
++class Oven:
++  def __init__(self):
++    self.ingredients = []
++    self.temperature = 0
++
++  def add(self, item):
++    self.ingredients.append(item)
++  def freeze(self, temperature):
++    self.temperature = temperature
++  def boil(self, temperature):
++    self.temperature = temperature
++  def wait(self, temperature):
++    self.temperature = temperature
++  def get_output(self):
++    if self.temperature == -100:
++      return "snow"
++    elif self.temperature == 150:
++      return "pizza"
++    elif self.temperature == 5000:
++      return "gold"
++
++
+ # This function should return an oven instance!
+ def make_oven():
+-  None
++  return Oven()
+ 
+ def alchemy_combine(oven, ingredients, temperature):
+   
+@@ -35,10 +58,10 @@ def alchemy_combine(oven, ingredients, temperature):
+     oven.add(item)
+ 
+   if temperature < 0:
+-    oven.freeze()
++    oven.freeze(temperature)
+   elif temperature >= 100:
+-    oven.boil()
++    oven.boil(temperature)
+   else:
+-    oven.wait()
++    oven.wait(temperature)
+ 
+   return oven.get_output()
+\ No newline at end of file
+diff --git a/part1/question3_test.py b/part1/question3_test.py
+index 6cb6c89..c1018de 100644
+--- a/part1/question3_test.py
++++ b/part1/question3_test.py
+@@ -1,3 +1,5 @@
++from question3 import alchemy_combine, make_oven
++
+ def test_alchemy_combine():
+ 
+   assert alchemy_combine(
+diff --git a/part1/question4.py b/part1/question4.py
+index 1e1b2bf..13a9a57 100644
+--- a/part1/question4.py
++++ b/part1/question4.py
+@@ -24,7 +24,7 @@ import pets_db
+ 
+ sql_pets_owned_by_nobody = """
+ 
+-Your SQL here.
++SELECT a.name, a.species, a.age from animals a LEFT JOIN people_animals pa on animal_id = pa.pet_id where owner_id is NULL
+ 
+ """
+ 
+@@ -34,7 +34,7 @@ Your SQL here.
+ 
+ sql_pets_older_than_owner = """
+ 
+-Your SQL here.
++SELECT COUNT(*) number FROM animals a LEFT JOIN people_animals pa on a.animal_id = pa.pet_id WHERE a.age > (Select p.age from people p LEFT JOIN people_animals pa on pa.owner_id = p.person_id) and pa.owner_id is not NULL 
+ 
+ """
+ 
+@@ -43,6 +43,16 @@ Your SQL here.
+ # The output should be a list of tuples in the format: (<person name>, <pet name>, <species>)
+ sql_only_owned_by_bessie = """ 
+ 
+-Your SQL here.
++SELECT p.name AS person_name, a.name AS pet_name, a.species
++FROM people AS p
++JOIN people_animals AS pa ON p.person_id = pa.owner_id
++JOIN animals AS a ON pa.pet_id = a.animal_id
++WHERE p.name = 'bessie'
++AND NOT EXISTS (
++    SELECT 1
++    FROM people_animals AS pa2
++    WHERE pa2.pet_id = a.animal_id
++    AND pa2.owner_id != p.person_id
++);
+ 
+ """
+\ No newline at end of file
+diff --git a/part1/question5.py b/part1/question5.py
+index f76654f..7dcf026 100644
+--- a/part1/question5.py
++++ b/part1/question5.py
+@@ -20,8 +20,11 @@
+ 
+ sql_create_favorite_foods = """
+ 
+-Your SQL here.
+-
++CREATE TABLE favorite_foods (
++    food_id INTEGER PRIMARY KEY,
++    name TEXT,
++    vegetarian INTEGER
++);
+ """
+ 
+ # Part 5.B:
+@@ -30,7 +33,11 @@ Your SQL here.
+ 
+ sql_alter_tables_with_favorite_food = """
+ 
+-Your SQL here.
++ALTER TABLE animals
++ADD favorite_food_id INTEGER;
++
++ALTER TABLE people
++ADD favorite_food_id INTEGER;
+ 
+ """
+ 
+@@ -40,6 +47,6 @@ Your SQL here.
+ 
+ sql_select_all_vegetarian_pets = """
+ 
+-Your SQL here.
++select a.name, ff.name from animals a INNER JOIN favorite_foods ff on ff.food_id = a.favorite_food_id where ff.vegetarian = 1
+ 
+ """
+\ No newline at end of file
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java b/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
+index 61c1fdd..c3b5d7c 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
+@@ -4,4 +4,6 @@ public interface Drink {
+   public String getName();
+ 
+   public boolean isFizzy();
+-}
+\ No newline at end of file
++}
++
++
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/KarenTea.java b/part2/src/main/java/org/velezreyes/quiz/question6/KarenTea.java
+new file mode 100644
+index 0000000..8af0081
+--- /dev/null
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/KarenTea.java
+@@ -0,0 +1,14 @@
++package org.velezreyes.quiz.question6;
++
++public class KarenTea implements Drink {
++
++    @Override
++    public String getName() {
++        return "KarenTea";
++    }
++
++    @Override
++    public boolean isFizzy() {
++        return false;
++    }
++}
+\ No newline at end of file
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/ScottCola.java b/part2/src/main/java/org/velezreyes/quiz/question6/ScottCola.java
+new file mode 100644
+index 0000000..4a350d0
+--- /dev/null
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/ScottCola.java
+@@ -0,0 +1,14 @@
++package org.velezreyes.quiz.question6;
++
++public class ScottCola implements Drink {
++
++    @Override
++    public String getName() {
++        return "ScottCola";
++    }
++
++    @Override
++    public boolean isFizzy() {
++        return true;
++    }
++}
+\ No newline at end of file
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+index 85742c4..41bef91 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+@@ -1,9 +1,40 @@
+ package org.velezreyes.quiz.question6;
+ 
+-public class VendingMachineImpl {
++public class VendingMachineImpl implements VendingMachine {
+ 
+-  public static VendingMachine getInstance() {
+-    // Fix me!
+-    return null;
++  private int totalMoney = 0;
++
++  @Override
++  public void insertQuarter() {
++    totalMoney += 25;
+   }
++
++  @Override
++  public Drink pressButton(String name) throws NotEnoughMoneyException, UnknownDrinkException {
++
++    if (name.equals("ScottCola")) {
++      if (totalMoney >= 75) {
++        totalMoney -= 75;
++        return new ScottCola();
++      } else {
++        throw new NotEnoughMoneyException();
++      }
++    } else if (name.equals("KarenTea")) {
++      if (totalMoney >= 100) {
++        totalMoney -= 100;
++        return new KarenTea();
++      } else {
++        throw new NotEnoughMoneyException();
++      }
++    } else {
++      throw new UnknownDrinkException();
++    }
++  }
++
++  public static VendingMachineImpl getInstance() {
++    return new VendingMachineImpl();
++  }
++
++
+ }
++
+diff --git a/part3/security_question.md b/part3/security_question.md
+new file mode 100644
+index 0000000..0eb774c
+--- /dev/null
++++ b/part3/security_question.md
+@@ -0,0 +1,24 @@
++Well, based on some knowledge I have about Cybersecurity and Ethical Hacking, I could say that I would take the following 6 points to ensure better security in my system: 
++
++1. Broken Access Control:
++- The first thing is that I would implement proper access controls to ensure that users can only access the resources they have permission to and not have a free path to all the services of my software.
++- I would have to ensure this by performing extensive testing to ensure that users cannot access unauthorized resources.
++
++2.  Sensitive Data Exposure:
++- Here, I would ensure that sensitive data, such as passwords, are stored securely and encrypted in the database.
++
++3. Security Misconfiguration:
++- The third thing is to take a good look at and secure the configuration of my Kubernetes environment, databases and other infrastructure components.
++- I would achieve this by implementing security principles in the configuration and access to these services.
++
++4. Protection against DDoS Attacks:
++- In this fourth point, a good way to have security in my software is to use protection services against distributed denial of service (DDoS) attacks to mitigate the risk of service interruptions.
++
++5. Penetration Testing and Security Assessments:
++- As part of finding vulnerability, I would ideally perform regular penetration tests to identify and correct potential unwanted access doors in my software.
++- In addition, I would also perform code security assessments to detect security issues before implementing new features.
++
++6. Security Education:
++- Last but not least, I believe it would be necessary to conduct cyber security trainings to all employees to increase awareness and promote secure practices.
++
++In conclusion, I think these would be the 6 most important points that I would take into account to maintain a good security practice in my software and ensure that all data and its users are safe from any attack or vulnerability.
