@@ -15,14 +15,14 @@ public class VendingMachineImpl implements VendingMachine {
     if (name.equals("ScottCola")) {
       if (totalMoney >= 75) {
         totalMoney -= 75;
-        return new ScottCola();
+        return new MyDrink("ScottCola", true);
       } else {
         throw new NotEnoughMoneyException();
       }
     } else if (name.equals("KarenTea")) {
       if (totalMoney >= 100) {
         totalMoney -= 100;
-        return new KarenTea();
+        return new MyDrink("KarenTea", false);
       } else {
         throw new NotEnoughMoneyException();
       }
